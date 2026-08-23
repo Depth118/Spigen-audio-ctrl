@@ -35,6 +35,22 @@ An unofficial Windows desktop companion app for the **Spigen SA-HP P10** over-ea
 
 ---
 
+## Screenshots
+
+**Noise Control**
+
+![Noise Control](docs/screenshots/noise-control.png)
+
+**Equalizer**
+
+![Equalizer](docs/screenshots/equalizer.png)
+
+**Button Remapping**
+
+![Button Remapping](docs/screenshots/button-remap.png)
+
+---
+
 ## Requirements
 
 - Windows 10 (Build 19041 or later) or Windows 11

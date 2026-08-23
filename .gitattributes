@@ -1,0 +1,19 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force CRLF for Windows-specific files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Force LF for cross-platform text files
+*.cs text eol=lf
+*.xaml text eol=lf
+*.csproj text eol=lf
+*.md text eol=lf
+*.gitignore text eol=lf
+
+# Binaries - never normalize
+*.ico binary
+*.png binary
+*.exe binary
+*.pdb binary

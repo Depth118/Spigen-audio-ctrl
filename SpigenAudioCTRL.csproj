@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <RootNamespace>SpigenAudioCTRL</RootNamespace>
+    <AssemblyName>SpigenAudioCTRL</AssemblyName>
+    <Product>Spigen Audio CTRL</Product>
+    <Title>Spigen Audio CTRL</Title>
+    
+    <!-- Standalone Single-File Native Windows Executable -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <!-- NOTE: PublishTrimmed is intentionally NOT set for this WPF project.
+         The .NET SDK blocks WPF trimming because XAML loads types via reflection at runtime —
+         the linker removes them silently, causing crashes before the CLR exception handler runs.
+         Self-contained WPF apps are inherently ~74MB; this is expected and correct. -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\**" />
+  </ItemGroup>
+
+</Project>

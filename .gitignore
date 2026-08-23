@@ -1,0 +1,55 @@
+## .NET / C# / WPF — Standard .gitignore
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Dist (self-contained single-file executable — not for source control)
+dist/
+
+# Visual Studio & Rider IDE files
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific project files
+*.rsuser
+
+# MSBuild
+*.user
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
+*.pfx
+*.publishsettings
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+*.trx
+
+# Log files
+*.log

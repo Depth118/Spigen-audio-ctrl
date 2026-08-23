@@ -1,115 +1,99 @@
-<p align="center">
-  <img src="Assets/logo.png" width="120" alt="Spigen Audio CTRL logo"/>
-</p>
+# SpigenAudioCTRL
 
-<h1 align="center">Spigen Audio CTRL</h1>
+An unofficial Windows desktop companion app for the **Spigen SA-HP P10** over-ear headphones. Built natively with C#, WPF, and WinRT Bluetooth LE GATT — no Electron, no middleware.
 
-<p align="center">
-  A high-performance, 100% native Windows companion app for the <strong>Spigen SA-HP P10</strong> over-ear headphones.
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white" alt=".NET 8"/>
-  <img src="https://img.shields.io/badge/Platform-Windows%2010%2F11-0078D4?logo=windows&logoColor=white" alt="Windows"/>
-  <img src="https://img.shields.io/badge/Protocol-BLE%20GATT-00B4AB" alt="BLE GATT"/>
-  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"/>
-</p>
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078D4?logo=windows&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 
-Built with pure **C# / WPF / XAML (.NET 8)** and direct **WinRT Bluetooth LE GATT** — no Electron, no framework overhead. Instant startup (<20ms), ultra-low memory (~25MB), and a clean Scandinavian design aesthetic.
+## Features
 
-## ⚡ Features
+**Noise Control**
+- ANC modes: Deep, Adaptive, Commuting, Anti-Wind, Transparency, Off
+- Low-latency Gaming Mode toggle
 
-### 〰️ Noise Control (ANC Modes)
-- Deep Noise Cancellation
-- Adaptive ANC
-- Commuting / Transit
-- Anti-Wind Cancellation
-- Transparency / Ambient Mode
-- Off (Passive Isolation)
-- Low-Latency Gaming Mode Toggle
+**Equalizer**
+- 10-band hardware DSP EQ via RCSP protocol
+- Interactive Bézier frequency response curve
+- Bands: 60Hz, 220Hz, 500Hz, 1kHz, 2kHz, 2.5kHz, 5kHz, 7.5kHz, 12kHz, 16kHz
+- Harman Audiophile Target reference overlay
+- Built-in presets (Flat, Bass Boost, Pop, Rock, Classical, Vocal, Gaming)
+- Custom preset slots
 
-### 🎚️ 10-Band Hardware DSP Equalizer
-- Real-time cubic Bézier response curve with 10 interactive drag handles
-- Precision hardware faders: 60Hz, 220Hz, 500Hz, 1kHz, 2kHz, 2.5kHz, 5kHz, 7.5kHz, 12kHz, 16kHz
-- Harman Audiophile Target reference ghost curve overlay
-- Factory presets: *Harman Audiophile Target, Bass Boost, Pop, Rock, Classical, Vocal Enhance, Gaming Footstep & Spatial*
-- Custom preset saving with auto-numbered slots
+**Button Remapping**
+- Remap Multi-Function Button: Single, Double, Triple Click
+- Remap Volume keys: Single Click, Long Press
+- Available actions: Play/Pause, Next/Prev Track, Volume, Voice Assistant, Gaming Mode, ANC Cycle
+- Changes are written directly to onboard headphone memory
 
-### 🔘 Button Remapping
-- Remap Multi-Function Button (Single, Double, Triple Click)
-- Remap Volume Up / Down (Single Click, Long Press)
-- Actions: Play/Pause, Next/Prev Track, Volume, Voice Assistant, Gaming Mode, ANC Switch
-- Instant live sync to onboard headphone memory via RCSP
-
-### ✨ Native Windows Experience
-- Windows 11 DWM dark mode title bar & rounded geometry
-- Custom Scandinavian-style scrollbars and controls
-- Bluetooth auto-reconnect with BLE advertisement scanning
-- Live battery level display from both BLE Battery Service and RCSP TLV
+**Connectivity**
+- BLE advertisement scanning — no hardcoded device address required
+- Automatic reconnect on disconnect
+- Battery level from both BLE Battery Service (0x180F) and RCSP TLV
 
 ---
 
-## 🛠️ Build & Run
+## Requirements
 
-### Prerequisites
-- Windows 10 (Build 19041+) or Windows 11
+- Windows 10 (Build 19041 or later) or Windows 11
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 
-### Quick Build (Standalone `.exe`)
+---
 
+## Build
+
+**Standalone executable:**
 ```cmd
 build.bat
 ```
 
-Or via the .NET CLI directly:
-
+Or manually:
 ```powershell
 dotnet publish SpigenAudioCTRL.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o dist/
 ```
 
-The standalone executable `dist\SpigenAudioCTRL.exe` (~78MB, no runtime dependencies required) will be generated.
+Output: `dist\SpigenAudioCTRL.exe` (~78 MB, self-contained, no runtime installation required)
 
-### Run from Source
-
+**Run from source:**
 ```powershell
 dotnet run
 ```
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
-| File | Responsibility |
-|------|---------------|
-| `BluetoothService.cs` | WinRT BLE GATT connection, scanning, GATT session, notify/write characteristics |
-| `RcspProtocol.cs` | RCSP packet encoding (ANC, EQ, Gaming Mode, Key Mapping, Hardware Query) |
-| `MainWindow.xaml.cs` | UI logic: EQ engine, canvas drag-draw, button remapping grid, debounce timer |
+| File | Role |
+|------|------|
+| `BluetoothService.cs` | BLE GATT connection, scanning, characteristic management |
+| `RcspProtocol.cs` | RCSP packet encoding (ANC, EQ, Gaming Mode, Key Mapping, hardware queries) |
+| `MainWindow.xaml.cs` | UI state, EQ canvas rendering, button remapping grid |
 | `App.xaml.cs` | Global unhandled exception handlers |
 
 ---
 
-## 📡 Protocol Notes
+## Protocol
 
-The Spigen SA-HP P10 uses a proprietary **RCSP (Real-time Control Serial Protocol)** over BLE GATT with a custom vendor service. Key packet structure:
+The SA-HP P10 communicates over BLE GATT using a proprietary RCSP framing:
 
 ```
 FE DC BA [flags] [opcode] [len_hi] [len_lo] [sn] [payload...] EF
 ```
 
-- **Write Characteristic**: matches UUID containing `ae01` or `0001` (Write / WriteWithoutResponse)
-- **Notify Characteristic**: matches UUID containing `ae02` or `0002`
-- **Battery**: Standard BLE Battery Service (UUID `180F`, Characteristic `2A19`)
+- **Write characteristic**: UUID contains `ae01` or `0001`
+- **Notify characteristic**: UUID contains `ae02` or `0002`
+- **Battery**: Standard BLE Battery Service — UUID `0x180F`, Characteristic `0x2A19`
 
 ---
 
-## ⚠️ Disclaimer
+## Disclaimer
 
-This project is an independent, unofficial third-party application. It is not affiliated with, endorsed by, or connected to Spigen Global Co., Ltd. in any way. Use at your own risk.
+This is an independent, unofficial project. Not affiliated with or endorsed by Spigen Global Co., Ltd.
 
 ---
 
-## 📄 License
+## License
 
-[MIT](LICENSE) — © 2026 safan
+[MIT](LICENSE) — Copyright (c) 2026 Safan Sulfikar

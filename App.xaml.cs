@@ -17,17 +17,19 @@ namespace SpigenAudioCTRL
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            Debug.WriteLine($"[Unhandled Dispatcher Exception] {e.Exception}");
-            MessageBox.Show($"Application Error: {e.Exception.Message}\n\n{e.Exception.StackTrace}", "Spigen Audio CTRL", MessageBoxButton.OK, MessageBoxImage.Error);
+            var ex = e.Exception.InnerException ?? e.Exception;
+            Debug.WriteLine($"[Unhandled Dispatcher Exception] {ex}");
+            MessageBox.Show($"Application Error: {ex.Message}\n\n{ex.StackTrace}", "Spigen Audio CTRL", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e.ExceptionObject is Exception ex)
+            if (e.ExceptionObject is Exception rawEx)
             {
+                var ex = rawEx.InnerException ?? rawEx;
                 Debug.WriteLine($"[Unhandled Domain Exception] {ex}");
-                MessageBox.Show($"Fatal Error: {ex.Message}", "Spigen Audio CTRL", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Fatal Error: {ex.Message}\n\n{ex.StackTrace}", "Spigen Audio CTRL", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

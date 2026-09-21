@@ -57,7 +57,28 @@ namespace SpigenAudioCTRL
         public static readonly int[] EqFrequencies = new int[] { 60, 220, 500, 1000, 2000, 2500, 5000, 7500, 12000, 16000 };
         public static readonly float[] EqQValues = new float[] { 0.4f, 1.2f, 1.5f, 1.5f, 1.2f, 0.8f, 1.2f, 1.2f, 1.2f, 1.2f };
 
-        public static byte[] EncodeEqCommand(float[] gains, byte mode = 126, float masterGain = 0.0f, byte sn = 1)
+        public static float CalculateAntiClippingPreAmp(IEnumerable<float> gains)
+        {
+            float maxGain = 0.0f;
+            foreach (var g in gains)
+            {
+                if (g > maxGain) maxGain = g;
+            }
+            // If any frequency is boosted above 0dB, apply negative pre-amp to prevent digital clipping
+            return maxGain > 0.0f ? -maxGain : 0.0f;
+        }
+
+        public static float CalculateAntiClippingPreAmp(IEnumerable<EqBand> bands)
+        {
+            float maxGain = 0.0f;
+            foreach (var b in bands)
+            {
+                if (b.Gain > maxGain) maxGain = b.Gain;
+            }
+            return maxGain > 0.0f ? -maxGain : 0.0f;
+        }
+
+        public static byte[] EncodeEqCommand(EqBand[] bands, byte mode = 126, float masterGain = 0.0f, byte sn = 1)
         {
             int totalBands = 10;
             // 65 bytes: 1 (0x20) + 1 (len=63) + 1 (mode=126) + 2 (masterGain) + (10 * 6 = 60 bytes)
@@ -72,9 +93,9 @@ namespace SpigenAudioCTRL
 
             for (int i = 0; i < totalBands; i++)
             {
-                int freq = (i < EqFrequencies.Length) ? EqFrequencies[i] : 1000;
-                float gain = (i < gains.Length) ? gains[i] : 0.0f;
-                float q = (i < EqQValues.Length) ? EqQValues[i] : 1.2f;
+                int freq = (bands != null && i < bands.Length) ? bands[i].Frequency : ((i < EqFrequencies.Length) ? EqFrequencies[i] : 1000);
+                float gain = (bands != null && i < bands.Length) ? bands[i].Gain : 0.0f;
+                float q = (bands != null && i < bands.Length) ? bands[i].Q : ((i < EqQValues.Length) ? EqQValues[i] : 1.2f);
 
                 short gVal = (short)(gain * 100.0f);
                 short qVal = (short)(q * 100.0f);
@@ -91,6 +112,21 @@ namespace SpigenAudioCTRL
             }
 
             return PackRcsp(0xFF, bArr, sn: sn);
+        }
+
+        public static byte[] EncodeEqCommand(float[] gains, byte mode = 126, float masterGain = 0.0f, byte sn = 1)
+        {
+            var bands = new EqBand[10];
+            for (int i = 0; i < 10; i++)
+            {
+                bands[i] = new EqBand
+                {
+                    Frequency = (i < EqFrequencies.Length) ? EqFrequencies[i] : 1000,
+                    Gain = (gains != null && i < gains.Length) ? gains[i] : 0.0f,
+                    Q = (i < EqQValues.Length) ? EqQValues[i] : 1.2f
+                };
+            }
+            return EncodeEqCommand(bands, mode, masterGain, sn);
         }
 
         public static HardwareAdvInfo ParseHardwareAdvInfo(byte[] data)
@@ -144,5 +180,23 @@ namespace SpigenAudioCTRL
         public string? Firmware { get; set; }
         public bool? GamingMode { get; set; }
         public Dictionary<string, int> KeySettings { get; set; } = new();
+    }
+
+    public class EqBand
+    {
+        public int Frequency { get; set; } = 1000;
+        public float Gain { get; set; } = 0.0f;
+        public float Q { get; set; } = 1.2f;
+
+        public EqBand() { }
+
+        public EqBand(int freq, float gain, float q = 1.2f)
+        {
+            Frequency = freq;
+            Gain = gain;
+            Q = q;
+        }
+
+        public EqBand Clone() => new EqBand(Frequency, Gain, Q);
     }
 }

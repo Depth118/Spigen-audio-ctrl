@@ -262,41 +262,116 @@
                 <Grid x:Name="panelEq" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="165" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="140" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <!-- Header & Preset Controls -->
-                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                    <Grid Grid.Row="0" Margin="0,0,0,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="10-Band DSP Equalizer" FontSize="18" FontWeight="SemiBold" Foreground="#FFFFFF"/>
-                            <TextBlock Text="Fine-tune 16-bit parametric hardware filters stored on-chip" FontSize="12.5" Foreground="#888888" Margin="0,3,0,0"/>
+                            <TextBlock Text="10-Band Parametric Equalizer" FontSize="18" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                            <TextBlock Text="Studio-grade hardware parametric DSP filters &amp; acoustic targets" FontSize="12" Foreground="#888888" Margin="0,2,0,0"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                            <ComboBox x:Name="cmbEqPresets" Style="{StaticResource NordicComboBoxStyle}" Width="190" Margin="0,0,8,0" SelectionChanged="CmbEqPresets_SelectionChanged"/>
+                            <ComboBox x:Name="cmbEqPresets" Style="{StaticResource NordicComboBoxStyle}" Width="220" Margin="0,0,8,0" SelectionChanged="CmbEqPresets_SelectionChanged"/>
                             <Button x:Name="btnSavePreset" Style="{StaticResource NordicButtonStyle}" Content="Save" Margin="0,0,6,0" Click="BtnSavePreset_Click"/>
                             <Button x:Name="btnResetEq" Style="{StaticResource NordicButtonStyle}" Content="Reset" Click="BtnResetEq_Click"/>
                         </StackPanel>
                     </Grid>
 
-                    <!-- Dynamic Bezier Curve Canvas -->
-                    <Border Grid.Row="1" Background="#0E0E0E" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
-                        <Canvas x:Name="eqCanvas" SizeChanged="EqCanvas_SizeChanged" MouseDown="EqCanvas_MouseDown" MouseMove="EqCanvas_MouseMove" MouseUp="EqCanvas_MouseUp"/>
+                    <!-- Target Profile & Pre-Amp Headroom Banner -->
+                    <Border Grid.Row="1" Margin="0,0,0,10" Background="#111111" BorderBrush="#14FFFFFF" BorderThickness="1" CornerRadius="5" Padding="10,6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Background="#1C1C1C" CornerRadius="3" Padding="5,2" Margin="0,0,8,0" VerticalAlignment="Center">
+                                <TextBlock Text="TARGET PROFILE" Foreground="#777777" FontSize="9" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Grid.Column="1" x:Name="txtPresetDescription" Text="Acoustically calibrated for P10 hardware: sub-bass rumble (+3.5dB), surgical anti-mud cut (-2.5dB at 220Hz), vocal pinna restoration (+3.0dB at 2.5kHz), and anti-sibilance control." Foreground="#AAAAAA" FontSize="11" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                            <!-- Pre-Amp Headroom Anti-Clipping Badge -->
+                            <Border Grid.Column="2" Background="#161616" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="10" Padding="8,3" VerticalAlignment="Center" ToolTip="Dynamic pre-attenuation prevents digital distortion when boosting EQ frequencies">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="preAmpDot" Width="6" Height="6" Fill="#52B788" Margin="0,0,6,0"/>
+                                    <TextBlock x:Name="txtPreAmpStatus" Text="Pre-Amp: 0.0 dB" Foreground="#999999" FontSize="10.5" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
                     </Border>
 
-                    <!-- 10 Vertical Sliders Rack -->
-                    <Border Grid.Row="2" Margin="0,10,0,0" Background="#141414" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Padding="6,12">
-                        <UniformGrid x:Name="eqSlidersGrid" Columns="10" Height="165"/>
+                    <!-- Dynamic Parametric Frequency Response Canvas -->
+                    <Border Grid.Row="2" Background="#0E0E0E" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
+                        <Canvas x:Name="eqCanvas" SizeChanged="EqCanvas_SizeChanged" MouseDown="EqCanvas_MouseDown" MouseMove="EqCanvas_MouseMove" MouseUp="EqCanvas_MouseUp" MouseWheel="EqCanvas_MouseWheel"/>
                     </Border>
 
-                    <!-- Harman Target Reference Toggle -->
-                    <Grid Grid.Row="3" Margin="0,12,0,0">
-                        <CheckBox x:Name="chkHarmanTarget" Content="Show Harman Target 2019 reference curve" IsChecked="True" Foreground="#888888" FontSize="12" Click="ChkHarmanTarget_Click">
+                    <!-- 10 Vertical Sliders Quick Rack -->
+                    <Border Grid.Row="3" Margin="0,8,0,0" Background="#141414" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Padding="6,8">
+                        <UniformGrid x:Name="eqSlidersGrid" Columns="10" Height="130"/>
+                    </Border>
+
+                    <!-- Selected Band Parametric Inspector -->
+                    <Border Grid.Row="4" Margin="0,8,0,0" Background="#111111" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Padding="12,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Selected Band Header -->
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock x:Name="txtInspectorBandName" Text="Band 5 (Mid)" FontWeight="SemiBold" FontSize="12.5" Foreground="#FFFFFF"/>
+                                <TextBlock x:Name="txtInspectorBandType" Text="Parametric Bell" Foreground="#777777" FontSize="10.5" Margin="0,1,0,0"/>
+                            </StackPanel>
+
+                            <!-- Frequency Control -->
+                            <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                                <Grid Margin="0,0,0,2">
+                                    <TextBlock Text="Frequency" Foreground="#888888" FontSize="10.5"/>
+                                    <TextBlock x:Name="txtInspectorFreq" Text="1,000 Hz" Foreground="#FFFFFF" FontSize="10.5" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Slider x:Name="sliderInspectorFreq" Style="{StaticResource NordicHorizontalSliderStyle}" Minimum="20" Maximum="20000" Value="1000" ValueChanged="SliderInspectorFreq_ValueChanged"/>
+                            </StackPanel>
+
+                            <!-- Gain Control -->
+                            <StackPanel Grid.Column="2" Margin="10,0" VerticalAlignment="Center">
+                                <Grid Margin="0,0,0,2">
+                                    <TextBlock Text="Gain" Foreground="#888888" FontSize="10.5"/>
+                                    <TextBlock x:Name="txtInspectorGain" Text="+0.0 dB" Foreground="#FFFFFF" FontSize="10.5" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Slider x:Name="sliderInspectorGain" Style="{StaticResource NordicHorizontalSliderStyle}" Minimum="-8" Maximum="8" Value="0" SmallChange="0.5" ValueChanged="SliderInspectorGain_ValueChanged"/>
+                            </StackPanel>
+
+                            <!-- Q-Factor Bandwidth Control -->
+                            <StackPanel Grid.Column="3" Margin="10,0" VerticalAlignment="Center">
+                                <Grid Margin="0,0,0,2">
+                                    <TextBlock Text="Q-Factor (Width)" Foreground="#888888" FontSize="10.5"/>
+                                    <TextBlock x:Name="txtInspectorQ" Text="Q: 1.20" Foreground="#FFFFFF" FontSize="10.5" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Slider x:Name="sliderInspectorQ" Style="{StaticResource NordicHorizontalSliderStyle}" Minimum="0.2" Maximum="5.0" Value="1.2" SmallChange="0.1" ValueChanged="SliderInspectorQ_ValueChanged"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Harman Target Reference Toggle & Canvas Interaction Tip -->
+                    <Grid Grid.Row="5" Margin="2,8,2,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <CheckBox Grid.Column="0" x:Name="chkHarmanTarget" Content="Harman Target 2018 reference curve" IsChecked="True" Foreground="#888888" FontSize="11.5" Click="ChkHarmanTarget_Click" VerticalAlignment="Center">
                             <CheckBox.Template>
                                 <ControlTemplate TargetType="CheckBox">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand">
@@ -306,6 +381,8 @@
                                 </ControlTemplate>
                             </CheckBox.Template>
                         </CheckBox>
+
+                        <TextBlock Grid.Column="1" Text="💡 Drag node up/down for Gain, left/right for Freq, scroll Mouse Wheel for Q-width" Foreground="#777777" FontSize="10.5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
                 </Grid>
 

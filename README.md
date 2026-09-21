@@ -14,13 +14,23 @@ An unofficial Windows desktop companion app for the **Spigen SA-HP P10** over-ea
 - ANC modes: Deep, Adaptive, Commuting, Anti-Wind, Transparency, Off
 - Low-latency Gaming Mode toggle
 
-**Equalizer**
-- 10-band hardware DSP EQ via RCSP protocol
-- Interactive Bézier frequency response curve
-- Bands: 60Hz, 220Hz, 500Hz, 1kHz, 2kHz, 2.5kHz, 5kHz, 7.5kHz, 12kHz, 16kHz
-- Harman Audiophile Target reference overlay
-- Built-in presets (Flat, Bass Boost, Pop, Rock, Classical, Vocal, Gaming)
-- Custom preset slots
+**Equalizer & Audiophile Audio Engine**
+- **10-Band Parametric Hardware DSP EQ**: Full control over frequency (20 Hz – 20 kHz), gain (±8 dB), and Q-factor bandwidth ($Q=0.2$ to $5.0$) written directly to headphone memory
+- **Dynamic Anti-Clipping Pre-Amp**: Automatic pre-attenuation calculation ($\min(0\text{ dB}, -\max(\text{Gain}))$) ensuring 100% distortion-free playback with maximum dynamic headroom
+- **Interactive Logarithmic Studio Canvas**: Drag vertically for gain, drag horizontally to sweep center frequency, scroll mouse wheel to widen/narrow Q-factor bandwidth
+- **Selected Band Parametric Inspector**: Fine-tune frequency, gain, and Q-factor sliders with real-time composite filter response curve
+- **Calibrated Audiophile Presets**:
+  - *P10 Audiophile Master (Recommended) — Custom-engineered for P10 hardware: anti-mud cut, pinna gain rise, sibilance taming*
+  - *P10 Dynamic V-Shape Rumble — Sub-bass punch and sparkling air for EDM/Hip-Hop*
+  - *Harman Over-Ear Target 2018 (Benchmark)*
+  - *Diffuse Field Studio Reference*
+  - *Vocal Clarity & Anti-Sibilance (-3.5dB surgical notch at 7.5kHz)*
+  - *Deep Sub-Bass Clean Rumble (45Hz lift with anti-mud cut)*
+  - *Warm Audiophile Soundstage*
+  - *Gaming Spatial & Footstep Enhancement*
+  - *Default Flat (Reference 0dB)*
+- **Harman Target Reference Overlay**: Toggleable visual target curve on the canvas
+- **Custom Preset Storage**: Save, recall, and reset custom parametric tunings
 
 **Button Remapping**
 - Remap Multi-Function Button: Single, Double, Triple Click

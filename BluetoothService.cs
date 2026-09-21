@@ -372,9 +372,16 @@ namespace SpigenAudioCTRL
             await SendPacketAsync(pkt);
         }
 
+        public async Task SetEqualizerAsync(EqBand[] bands, float masterGain = 0.0f)
+        {
+            byte[] pkt = RcspProtocol.EncodeEqCommand(bands, 126, masterGain, NextSn());
+            await SendPacketAsync(pkt);
+        }
+
         public async Task SetEqualizerAsync(float[] gains, byte mode = 126)
         {
-            byte[] pkt = RcspProtocol.EncodeEqCommand(gains, mode, 0.0f, NextSn());
+            float masterGain = RcspProtocol.CalculateAntiClippingPreAmp(gains);
+            byte[] pkt = RcspProtocol.EncodeEqCommand(gains, mode, masterGain, NextSn());
             await SendPacketAsync(pkt);
         }
 

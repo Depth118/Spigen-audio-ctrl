@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      HAS_SIGNING_CERT: ${{ secrets.SIGNING_CERT_BASE64 != '' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Test
+        run: dotnet test tests/SpigenAudioCTRL.Tests/SpigenAudioCTRL.Tests.csproj -c Release
+
+      - name: Determine version
+        shell: pwsh
+        run: |
+          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { "2.0.0-ci.$env:GITHUB_RUN_NUMBER" }
+          "VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          $common = @('SpigenAudioCTRL.csproj', '-c', 'Release', '-r', 'win-x64', '-p:PublishSingleFile=true', '-p:DebugType=none', "-p:Version=$env:VERSION")
+          dotnet publish @common --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o out/standalone
+          dotnet publish @common --self-contained false -o out/requires-dotnet8
+
+      # Optional: add SIGNING_CERT_BASE64 (a base64-encoded .pfx) and SIGNING_CERT_PASSWORD
+      # as repository secrets to sign the executables and avoid SmartScreen warnings.
+      - name: Sign
+        if: env.HAS_SIGNING_CERT == 'true'
+        shell: pwsh
+        env:
+          SIGNING_CERT_BASE64: ${{ secrets.SIGNING_CERT_BASE64 }}
+          SIGNING_CERT_PASSWORD: ${{ secrets.SIGNING_CERT_PASSWORD }}
+        run: |
+          $pfx = Join-Path $env:RUNNER_TEMP 'signing.pfx'
+          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:SIGNING_CERT_BASE64))
+          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" | Sort-Object FullName | Select-Object -Last 1
+          try {
+            foreach ($exe in 'out/standalone/SpigenAudioCTRL.exe', 'out/requires-dotnet8/SpigenAudioCTRL.exe') {
+              & $signtool.FullName sign /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 /f $pfx /p $env:SIGNING_CERT_PASSWORD $exe
+              if ($LASTEXITCODE -ne 0) { throw "Signing $exe failed" }
+            }
+          } finally {
+            Remove-Item $pfx -Force
+          }
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          Copy-Item out/standalone/SpigenAudioCTRL.exe "release/SpigenAudioCTRL-$env:VERSION-win-x64.exe"
+          Compress-Archive out/requires-dotnet8/SpigenAudioCTRL.exe "release/SpigenAudioCTRL-$env:VERSION-win-x64-requires-dotnet8.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpigenAudioCTRL-${{ env.VERSION }}
+          path: release/*
+
+      - name: Create GitHub release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true

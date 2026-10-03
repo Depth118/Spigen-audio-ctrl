@@ -1,26 +1,33 @@
 @echo off
+setlocal
 title Building Spigen Audio CTRL
-echo ========================================================
-echo   Building Spigen Audio CTRL Native Windows App (.NET 8)
-echo ========================================================
+
+set DOTNET=dotnet
+if exist "%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe" set DOTNET="%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe"
+set PUBLISH=%DOTNET% publish SpigenAudioCTRL.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:DebugType=none
+
+echo Running tests...
+%DOTNET% test tests\SpigenAudioCTRL.Tests\SpigenAudioCTRL.Tests.csproj -c Release || goto :failed
+
 echo.
+echo Publishing standalone build (no .NET installation needed)...
+%PUBLISH% --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o dist || goto :failed
 
-set DOTNET_EXE="%LOCALAPPDATA%\Microsoft\dotnet\dotnet.exe"
-if not exist %DOTNET_EXE% (
-    set DOTNET_EXE=dotnet
-)
+echo.
+echo Publishing small build (needs the .NET 8 Desktop Runtime)...
+%PUBLISH% --self-contained false -o dist\requires-dotnet8 || goto :failed
 
-%DOTNET_EXE% publish "SpigenAudioCTRL.csproj" -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o "dist\"
-
-if %ERRORLEVEL% EQU 0 (
-    echo.
-    echo ========================================================
-    echo   BUILD SUCCESSFUL!
-    echo   Standalone Executable: dist\SpigenAudioCTRL.exe
-    echo ========================================================
-) else (
-    echo.
-    echo Build failed with error code %ERRORLEVEL%
-)
-
+echo.
+echo ========================================================
+echo   BUILD SUCCESSFUL
+echo   Standalone: dist\SpigenAudioCTRL.exe
+echo   Small:      dist\requires-dotnet8\SpigenAudioCTRL.exe
+echo ========================================================
 pause
+exit /b 0
+
+:failed
+echo.
+echo Build failed with error code %ERRORLEVEL%
+pause
+exit /b 1

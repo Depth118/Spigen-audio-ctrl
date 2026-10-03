@@ -26,6 +26,8 @@
 
   <ItemGroup>
     <Resource Include="Assets\**" />
+    <!-- The test project is built separately. -->
+    <Compile Remove="tests\**" />
   </ItemGroup>
 
 </Project>

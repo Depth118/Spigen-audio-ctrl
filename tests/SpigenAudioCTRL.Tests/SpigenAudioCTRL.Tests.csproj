@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Protocol and audio code has no WPF/WinRT dependencies, so it is compiled in directly. -->
+  <ItemGroup>
+    <Compile Include="..\..\Device\RcspProtocol.cs" Link="App\Device\RcspProtocol.cs" />
+    <Compile Include="..\..\Device\AncModes.cs" Link="App\Device\AncModes.cs" />
+    <Compile Include="..\..\Audio\EqBand.cs" Link="App\Audio\EqBand.cs" />
+    <Compile Include="..\..\Audio\EqMath.cs" Link="App\Audio\EqMath.cs" />
+    <Compile Include="..\..\Audio\EqPresets.cs" Link="App\Audio\EqPresets.cs" />
+    <Compile Include="..\..\Audio\SoundTuner.cs" Link="App\Audio\SoundTuner.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+</Project>

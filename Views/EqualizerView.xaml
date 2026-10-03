@@ -1,0 +1,136 @@
+<UserControl x:Class="SpigenAudioCTRL.Views.EqualizerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="110" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0">
+                <TextBlock Text="10-Band Parametric Equalizer" FontSize="18" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                <TextBlock Text="Stored on the headset; replaces Spigen's built-in tuning" FontSize="12" Foreground="#888888" Margin="0,2,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+            <Button Grid.Column="1" x:Name="btnPersonal" Style="{StaticResource NordicPrimaryButtonStyle}" Content="Find your sound" VerticalAlignment="Center"
+                    Click="Personal_Click" ToolTip="Build a personal EQ by comparing two versions of your music"/>
+        </Grid>
+
+        <!-- Preset Toolbar -->
+        <Grid Grid.Row="1" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <ComboBox x:Name="cmbPresets" Style="{StaticResource NordicComboBoxStyle}" Width="240" Margin="0,0,8,0" SelectionChanged="Presets_SelectionChanged" AutomationProperties.Name="Equalizer preset"/>
+                <Button x:Name="btnSave" Style="{StaticResource NordicButtonStyle}" Content="Save" Margin="0,0,6,0" Click="Save_Click" ToolTip="Save the current curve as a preset"/>
+                <Button x:Name="btnDelete" Style="{StaticResource NordicButtonStyle}" Content="Delete" Margin="0,0,6,0" Click="Delete_Click" Visibility="Collapsed" ToolTip="Delete this saved preset"/>
+                <Button x:Name="btnStock" Style="{StaticResource NordicButtonStyle}" Content="Stock" Click="Stock_Click" ToolTip="Restore Spigen's stock tuning"/>
+            </StackPanel>
+            <Border Grid.Column="1" Background="#161616" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="10" Padding="8,3" VerticalAlignment="Center"
+                    ToolTip="Overall level is lowered by the peak of the combined curve, so boosts cannot clip">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse x:Name="headroomDot" Width="6" Height="6" Fill="#52B788" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="txtHeadroom" Text="Headroom: 0.0 dB" Foreground="#999999" FontSize="10.5" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Preset Description (wraps rather than truncating) -->
+        <TextBlock Grid.Row="2" x:Name="txtDescription" Text="Connect the headset to read its equalizer." Foreground="#AAAAAA" FontSize="11.5"
+                   TextWrapping="Wrap" Margin="2,0,2,10"/>
+
+        <!-- Frequency Response Canvas (keyboard: arrows select/adjust, Shift+arrows move, PgUp/PgDn width) -->
+        <Border Grid.Row="3" Background="#0E0E0E" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" ClipToBounds="True">
+            <Canvas x:Name="eqCanvas" Background="Transparent" Focusable="True" FocusVisualStyle="{StaticResource NordicFocusVisual}"
+                    AutomationProperties.Name="Equalizer curve. Left and Right select a band, Up and Down change gain, Shift with Left and Right changes frequency, Page Up and Page Down change width."
+                    SizeChanged="Canvas_SizeChanged" MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove" MouseUp="Canvas_MouseUp" MouseWheel="Canvas_MouseWheel" KeyDown="Canvas_KeyDown"/>
+        </Border>
+
+        <!-- 10 Vertical Sliders -->
+        <Border Grid.Row="4" Margin="0,8,0,0" Background="#141414" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Padding="6,8">
+            <UniformGrid x:Name="slidersGrid" Columns="10" Height="130"/>
+        </Border>
+
+        <!-- Selected Band Inspector -->
+        <Border Grid.Row="5" Margin="0,8,0,0" Background="#111111" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Padding="12,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock x:Name="txtBandName" Text="Band 4 (Mid)" FontWeight="SemiBold" FontSize="12.5" Foreground="#FFFFFF"/>
+                    <TextBlock Text="Peaking filter" Foreground="#777777" FontSize="10.5" Margin="0,1,0,0"/>
+                </StackPanel>
+
+                <!-- Frequency on a log scale: the slider runs 0..1 over 20 Hz..20 kHz -->
+                <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+                    <Grid Margin="0,0,0,2">
+                        <TextBlock Text="Frequency" Foreground="#888888" FontSize="10.5"/>
+                        <TextBlock x:Name="txtFreq" Text="1,000 Hz" Foreground="#FFFFFF" FontSize="10.5" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Slider x:Name="sliderFreq" Style="{StaticResource NordicHorizontalSliderStyle}" Minimum="0" Maximum="1" SmallChange="0.005" LargeChange="0.05" ValueChanged="Freq_ValueChanged" AutomationProperties.Name="Selected band frequency"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Margin="10,0" VerticalAlignment="Center">
+                    <Grid Margin="0,0,0,2">
+                        <TextBlock Text="Gain" Foreground="#888888" FontSize="10.5"/>
+                        <TextBlock x:Name="txtGain" Text="+0.0 dB" Foreground="#FFFFFF" FontSize="10.5" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Slider x:Name="sliderGain" Style="{StaticResource NordicHorizontalSliderStyle}" Minimum="-10" Maximum="8" SmallChange="0.5" LargeChange="1" ValueChanged="Gain_ValueChanged" AutomationProperties.Name="Selected band gain"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="3" Margin="10,0" VerticalAlignment="Center">
+                    <Grid Margin="0,0,0,2">
+                        <TextBlock Text="Q-Factor (Width)" Foreground="#888888" FontSize="10.5"/>
+                        <TextBlock x:Name="txtQ" Text="Q: 1.20" Foreground="#FFFFFF" FontSize="10.5" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Slider x:Name="sliderQ" Style="{StaticResource NordicHorizontalSliderStyle}" Minimum="0.2" Maximum="5.0" SmallChange="0.1" LargeChange="0.5" ValueChanged="Q_ValueChanged" AutomationProperties.Name="Selected band width"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Stock Tuning Overlay Toggle & Tip -->
+        <Grid Grid.Row="6" Margin="2,8,2,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <CheckBox Grid.Column="0" x:Name="chkStockOverlay" Content="Spigen stock tuning (reference)" IsChecked="True" Foreground="#888888" FontSize="11.5" Click="StockOverlay_Click" VerticalAlignment="Center"
+                      FocusVisualStyle="{StaticResource NordicFocusVisual}">
+                <CheckBox.Template>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand" Background="Transparent">
+                            <Ellipse x:Name="dot" Width="8" Height="8" Fill="#E5A93C" Margin="0,0,8,0"/>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="dot" Property="Fill" Value="#333333"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </CheckBox.Template>
+            </CheckBox>
+
+            <TextBlock Grid.Column="1" Text="Drag a node up/down for gain, left/right for frequency; scroll for Q" Foreground="#777777" FontSize="10.5"
+                       TextWrapping="Wrap" TextAlignment="Right" Margin="12,0,0,0" VerticalAlignment="Center"/>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,21 @@
+<UserControl x:Class="SpigenAudioCTRL.Views.ButtonsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="Button Remapping" FontSize="18" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+            <TextBlock x:Name="txtStatus" Text="Connect the headset to read its button settings." FontSize="12.5" Foreground="#888888" Margin="0,3,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Background="#141414" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Padding="14,6">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="rowsPanel"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

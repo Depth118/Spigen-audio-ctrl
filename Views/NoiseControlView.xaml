@@ -1,0 +1,142 @@
+<UserControl x:Class="SpigenAudioCTRL.Views.NoiseControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Noise Control" FontSize="18" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+            <TextBlock Text="Select active acoustic isolation or ambient transparency profile" FontSize="12.5" Foreground="#888888" Margin="0,3,0,0"/>
+        </StackPanel>
+
+        <!-- Mode tiles (ids from Spigen's own configuration for this headset) -->
+        <Grid Grid.Row="1" x:Name="tilesGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <RadioButton Grid.Row="0" Grid.Column="0" x:Name="ancAdaptive" GroupName="AncMode" Style="{StaticResource NordicAncTileStyle}" Checked="Mode_Checked" AutomationProperties.Name="Adaptive noise cancelling">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Adaptive" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" Margin="0,0,8,2" VerticalAlignment="Center"/>
+                        <Border Background="#1C1C1C" CornerRadius="4" Padding="6,2" VerticalAlignment="Center" Margin="0,0,0,2">
+                            <TextBlock Text="Auto" FontSize="10" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                        </Border>
+                    </WrapPanel>
+                    <TextBlock Text="Adjusts noise cancelling to your surroundings automatically." Foreground="#777777" FontSize="11" TextWrapping="Wrap"/>
+                </StackPanel>
+            </RadioButton>
+
+            <RadioButton Grid.Row="0" Grid.Column="1" x:Name="ancDeep" GroupName="AncMode" Style="{StaticResource NordicAncTileStyle}" Checked="Mode_Checked" AutomationProperties.Name="Deep noise cancelling">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Deep" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" Margin="0,0,8,2" VerticalAlignment="Center"/>
+                        <Border Background="#1C1C1C" CornerRadius="4" Padding="6,2" VerticalAlignment="Center" Margin="0,0,0,2">
+                            <TextBlock Text="Loud" FontSize="10" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                        </Border>
+                    </WrapPanel>
+                    <TextBlock Text="Strongest isolation for flights, transit and loud places." Foreground="#777777" FontSize="11" TextWrapping="Wrap"/>
+                </StackPanel>
+            </RadioButton>
+
+            <RadioButton Grid.Row="0" Grid.Column="2" x:Name="ancCommuting" GroupName="AncMode" Style="{StaticResource NordicAncTileStyle}" Checked="Mode_Checked" AutomationProperties.Name="Commuting noise cancelling">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Commuting" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" Margin="0,0,8,2" VerticalAlignment="Center"/>
+                        <Border Background="#1C1C1C" CornerRadius="4" Padding="6,2" VerticalAlignment="Center" Margin="0,0,0,2">
+                            <TextBlock Text="Transit" FontSize="10" FontWeight="SemiBold" Foreground="#888888"/>
+                        </Border>
+                    </WrapPanel>
+                    <TextBlock Text="For moderately noisy places like trains and buses." Foreground="#777777" FontSize="11" TextWrapping="Wrap"/>
+                </StackPanel>
+            </RadioButton>
+
+            <RadioButton Grid.Row="0" Grid.Column="3" x:Name="ancIndoor" GroupName="AncMode" Style="{StaticResource NordicAncTileStyle}" Checked="Mode_Checked" AutomationProperties.Name="Indoor noise cancelling">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Indoor" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" Margin="0,0,8,2" VerticalAlignment="Center"/>
+                        <Border Background="#1C1C1C" CornerRadius="4" Padding="6,2" VerticalAlignment="Center" Margin="0,0,0,2">
+                            <TextBlock Text="Quiet" FontSize="10" FontWeight="SemiBold" Foreground="#888888"/>
+                        </Border>
+                    </WrapPanel>
+                    <TextBlock Text="Light noise cancelling for offices and quiet rooms." Foreground="#777777" FontSize="11" TextWrapping="Wrap"/>
+                </StackPanel>
+            </RadioButton>
+
+            <RadioButton Grid.Row="1" Grid.Column="0" x:Name="ancAntiWind" GroupName="AncMode" Style="{StaticResource NordicAncTileStyle}" Checked="Mode_Checked" AutomationProperties.Name="Anti-wind mode">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Anti-Wind" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" Margin="0,0,8,2" VerticalAlignment="Center"/>
+                        <Border Background="#1C1C1C" CornerRadius="4" Padding="6,2" VerticalAlignment="Center" Margin="0,0,0,2">
+                            <TextBlock Text="Outdoor" FontSize="10" FontWeight="SemiBold" Foreground="#888888"/>
+                        </Border>
+                    </WrapPanel>
+                    <TextBlock Text="Reduces wind noise picked up by the outer microphones." Foreground="#777777" FontSize="11" TextWrapping="Wrap"/>
+                </StackPanel>
+            </RadioButton>
+
+            <RadioButton Grid.Row="1" Grid.Column="1" x:Name="ancTransparency" GroupName="AncMode" Style="{StaticResource NordicAncTileStyle}" Checked="Mode_Checked" AutomationProperties.Name="Transparency mode">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Transparency" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" Margin="0,0,8,2" VerticalAlignment="Center"/>
+                        <Border Background="#1C1C1C" CornerRadius="4" Padding="6,2" VerticalAlignment="Center" Margin="0,0,0,2">
+                            <TextBlock Text="Ambient" FontSize="10" FontWeight="SemiBold" Foreground="#CCCCCC"/>
+                        </Border>
+                    </WrapPanel>
+                    <TextBlock Text="Lets outside sound through for conversations and awareness." Foreground="#777777" FontSize="11" TextWrapping="Wrap"/>
+                </StackPanel>
+            </RadioButton>
+
+            <RadioButton Grid.Row="1" Grid.Column="2" x:Name="ancOff" GroupName="AncMode" Style="{StaticResource NordicAncTileStyle}" Checked="Mode_Checked" AutomationProperties.Name="Noise cancelling off">
+                <StackPanel>
+                    <WrapPanel Margin="0,0,0,6">
+                        <TextBlock Text="Off" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" Margin="0,0,8,2" VerticalAlignment="Center"/>
+                        <Border Background="#1C1C1C" CornerRadius="4" Padding="6,2" VerticalAlignment="Center" Margin="0,0,0,2">
+                            <TextBlock Text="Passive" FontSize="10" FontWeight="SemiBold" Foreground="#888888"/>
+                        </Border>
+                    </WrapPanel>
+                    <TextBlock Text="No noise cancelling; longest battery life." Foreground="#777777" FontSize="11" TextWrapping="Wrap"/>
+                </StackPanel>
+            </RadioButton>
+
+            <!-- Strength for Deep / Commuting / Indoor -->
+            <Border Grid.Row="1" Grid.Column="3" x:Name="levelPanel" Margin="4" Background="#111111" BorderBrush="#14FFFFFF" BorderThickness="1" CornerRadius="6" Padding="14,12" IsEnabled="False"
+                    ToolTip="Spigen's app offers three levels for Deep, Commuting and Indoor">
+                <StackPanel>
+                    <TextBlock Text="Strength" FontWeight="SemiBold" FontSize="13" Foreground="#FFFFFF" Margin="0,0,0,8"/>
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton x:Name="level0" GroupName="AncLevel" Style="{StaticResource NordicSegmentStyle}" Content="1" Checked="Level_Checked" AutomationProperties.Name="Strength 1"/>
+                        <RadioButton x:Name="level1" GroupName="AncLevel" Style="{StaticResource NordicSegmentStyle}" Content="2" Checked="Level_Checked" AutomationProperties.Name="Strength 2"/>
+                        <RadioButton x:Name="level2" GroupName="AncLevel" Style="{StaticResource NordicSegmentStyle}" Content="3" Checked="Level_Checked" AutomationProperties.Name="Strength 3" IsChecked="True"/>
+                    </StackPanel>
+                    <TextBlock Text="Deep, Commuting and Indoor only" Foreground="#666666" FontSize="10.5" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Margin="4,16,4,0" Background="#141414" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Padding="16,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="Low-Latency Gaming Mode" FontSize="13" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                    <TextBlock Text="Reduces wireless audio delay for games and video" FontSize="11.5" Foreground="#777777" Margin="0,2,0,0"/>
+                </StackPanel>
+                <CheckBox Grid.Column="1" x:Name="chkGamingMode" Style="{StaticResource NordicToggleSwitchStyle}" Click="GamingMode_Click" AutomationProperties.Name="Low-latency gaming mode"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

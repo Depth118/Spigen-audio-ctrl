@@ -1,0 +1,95 @@
+<Window x:Class="SpigenAudioCTRL.Views.PersonalEqWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Personal EQ"
+        Width="560" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="#0E0E0E"
+        Foreground="#FFFFFF"
+        FontFamily="Segoe UI Variable Display, Segoe UI Variable Text, Segoe UI, sans-serif"
+        KeyDown="Window_KeyDown">
+    <Grid Margin="24,20,24,20">
+
+        <!-- Intro -->
+        <StackPanel x:Name="introPanel">
+            <TextBlock Text="Find your sound" FontSize="18" FontWeight="SemiBold"/>
+            <TextBlock Foreground="#AAAAAA" FontSize="12.5" TextWrapping="Wrap" Margin="0,8,0,0"
+                       Text="Compare two versions of your music and pick the one you like. Your choices shape a personal equalizer, built on Spigen's tuning."/>
+            <Border Background="#141414" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Padding="14,12" Margin="0,16,0,0">
+                <StackPanel>
+                    <TextBlock Text="How it works" FontWeight="SemiBold" FontSize="13"/>
+                    <TextBlock Foreground="#BBBBBB" FontSize="12" TextWrapping="Wrap" Margin="0,8,0,0" LineHeight="20">
+                        1. Start playing a song you know well, in any app.<LineBreak/>
+                        2. Tap A and B to switch the headphones between two versions.<LineBreak/>
+                        3. Pick the one you prefer. If they sound the same, choose "Can't tell".<LineBreak/>
+                        Up to 10 choices, about two minutes.
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+                <Button Style="{StaticResource NordicButtonStyle}" Content="Cancel" Margin="0,0,8,0" IsCancel="True" Click="Cancel_Click"/>
+                <Button Style="{StaticResource NordicButtonStyle}" Content="Start" IsDefault="True" Click="Start_Click"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- A/B comparison -->
+        <StackPanel x:Name="comparePanel" Visibility="Collapsed">
+            <TextBlock x:Name="txtProgress" Text="Step 1 of up to 10" Foreground="#888888" FontSize="11.5"/>
+            <TextBlock x:Name="txtDimension" Text="Bass" FontSize="18" FontWeight="SemiBold" Margin="0,2,0,0"/>
+            <TextBlock x:Name="txtDimensionHint" Text="Listen to the kick drums and bass lines." Foreground="#AAAAAA" FontSize="12.5" Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+            <Grid Margin="-4,16,-4,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <RadioButton x:Name="optionA" Grid.Column="0" GroupName="Version" Style="{StaticResource NordicAncTileStyle}" Checked="Option_Checked" AutomationProperties.Name="Version A">
+                    <StackPanel HorizontalAlignment="Center" Margin="0,10">
+                        <TextBlock Text="A" FontSize="34" FontWeight="SemiBold" Foreground="#FFFFFF" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="txtStateA" Text="Tap to listen" Foreground="#888888" FontSize="11.5" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="optionB" Grid.Column="1" GroupName="Version" Style="{StaticResource NordicAncTileStyle}" Checked="Option_Checked" AutomationProperties.Name="Version B">
+                    <StackPanel HorizontalAlignment="Center" Margin="0,10">
+                        <TextBlock Text="B" FontSize="34" FontWeight="SemiBold" Foreground="#FFFFFF" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="txtStateB" Text="Tap to listen" Foreground="#888888" FontSize="11.5" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </RadioButton>
+            </Grid>
+
+            <TextBlock x:Name="txtHint" Text="Listen to both, switching as often as you like." Foreground="#666666" FontSize="11" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+
+            <Grid Margin="0,18,0,0">
+                <Button Style="{StaticResource NordicButtonStyle}" Content="Start over" HorizontalAlignment="Left" Click="StartOver_Click"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="btnCantTell" Style="{StaticResource NordicButtonStyle}" Content="Can't tell" Margin="0,0,8,0" Click="CantTell_Click"/>
+                    <Button x:Name="btnChoose" Style="{StaticResource NordicButtonStyle}" Content="Choose" IsEnabled="False" Click="Choose_Click"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
+        <!-- Result -->
+        <StackPanel x:Name="resultPanel" Visibility="Collapsed">
+            <TextBlock Text="Your Personal EQ" FontSize="18" FontWeight="SemiBold"/>
+            <TextBlock x:Name="txtSummary" Foreground="#AAAAAA" FontSize="12.5" TextWrapping="Wrap" Margin="0,8,0,0"/>
+            <Border Background="#0A0A0A" BorderBrush="#1AFFFFFF" BorderThickness="1" CornerRadius="6" Margin="0,14,0,0" Height="150" ClipToBounds="True">
+                <Canvas x:Name="resultCanvas" SizeChanged="ResultCanvas_SizeChanged"/>
+            </Border>
+            <StackPanel Orientation="Horizontal" Margin="2,8,0,0">
+                <Rectangle Width="14" Height="2" Fill="#FFFFFF" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBlock Text="Personal" Foreground="#AAAAAA" FontSize="11" Margin="0,0,16,0"/>
+                <Rectangle Width="14" Height="2" Fill="#E5A93C" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBlock Text="Spigen stock tuning" Foreground="#AAAAAA" FontSize="11"/>
+            </StackPanel>
+            <TextBlock Foreground="#777777" FontSize="11" TextWrapping="Wrap" Margin="0,10,0,0"
+                       Text="Your headphones are playing this curve now."/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+                <Button Style="{StaticResource NordicButtonStyle}" Content="Discard" Margin="0,0,8,0" Click="Cancel_Click"/>
+                <Button Style="{StaticResource NordicButtonStyle}" Content="Start over" Margin="0,0,8,0" Click="StartOver_Click"/>
+                <Button Style="{StaticResource NordicButtonStyle}" Content="Save as Personal" IsDefault="True" Click="Save_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

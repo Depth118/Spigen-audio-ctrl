@@ -6,23 +6,23 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <!-- Only for the notification-area icon (NotifyIcon). -->
+    <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <RootNamespace>SpigenAudioCTRL</RootNamespace>
     <AssemblyName>SpigenAudioCTRL</AssemblyName>
     <Product>Spigen Audio CTRL</Product>
     <Title>Spigen Audio CTRL</Title>
-    
-    <!-- Standalone Single-File Native Windows Executable -->
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <!-- NOTE: PublishTrimmed is intentionally NOT set for this WPF project.
-         The .NET SDK blocks WPF trimming because XAML loads types via reflection at runtime —
-         the linker removes them silently, causing crashes before the CLR exception handler runs.
-         Self-contained WPF apps are inherently ~74MB; this is expected and correct. -->
+    <Version>2.0.0</Version>
+    <!-- Publishing options (single file, self-contained or not) are passed by build.bat and CI.
+         PublishTrimmed stays off: WPF loads XAML types by reflection and trimming breaks it. -->
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF and WinForms share type names (Button, Application...); keep WinForms out of global usings. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\**" />
